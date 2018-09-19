@@ -16,6 +16,21 @@ export const OpenMapDirections = (frmCoord = null, toCoord, transportType) => ne
 	_openApp(url).then(result => { resolve(result) });
 });
 
+
+export const OpenMapDirectionsByAddress = (frmCoord = null, toCoord, transportType) => new Promise((resolve, reject) => {
+	let _toCoord;
+	const _frmCoord = _checkParameters(frmCoord) !== null ? `?saddr=${_checkParameters(frmCoord)}` : '';
+	if (_checkParameters(toCoord) !== null) {
+		_toCoord = (_frmCoord.length == 0 ? '?' : '&') + `daddr=${toCoord}`
+	} else {
+		throw new Error('You need to pass a valid endpoint(number)')
+	};
+	const _transportType = _checkTransportParameter(transportType) !== null ? `&dirflg=${_checkTransportParameter(transportType)}` : '';
+	const url = `${PLATFORM === 'ios' ? `https://maps.apple.com/` : 'https://maps.google.com/'}${_frmCoord}${_toCoord}${_transportType}`;
+	_openApp(url).then(result => { resolve(result) });
+});
+
+
 const _openApp = (url) => new Promise((resolve, reject) => {
 	Linking.canOpenURL(url)
 		.then(res => {
